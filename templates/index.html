@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI-Powered NER</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>📄 AI-Powered Named Entity Recognition</h1>
+      <p>Upload your PDF or Img to extract named entities accurately!</p>
+    </header>
+    
+    <form id="upload-form" enctype="multipart/form-data">
+      <div class="center">
+        <label class="custom-file-upload">
+          <input type="file" id="file" name="file" accept=".pdf,.png,.jpg,.jpeg" required />
+
+          📤 Upload PDF or Img 
+        </label>
+        <button type="submit" class="upload-btn">Extract Entities</button>
+      </div>
+      <p id="file-name" class="hidden">No file chosen</p>
+    </form>
+
+    <div class="loader hidden" id="loader"></div>
+
+    <div id="result" class="hidden">
+      <h2>🔎 Extracted Entities</h2>
+      <div class="overview">
+        <p><strong>Total Entities Extracted:</strong> <span id="totalEntities">0</span></p>
+        <p><strong>Entities by Type:</strong> <span id="entitySummary">-</span></p>
+      </div>
+      
+      <label for="entityFilter">Filter by Entity Type:</label>
+      <select id="entityFilter">
+        <option value="All">All</option>
+      </select>
+      
+      <table id="entityTable">
+        <thead>
+          <tr>
+            <th>Entity</th>
+            <th>Label</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script src="/static/script.js"></script>
+</body>
+</html>
