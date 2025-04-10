@@ -5,6 +5,39 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AI-Powered NER</title>
   <link rel="stylesheet" href="/static/styles.css" />
+  <style>
+  #entityTable td:nth-child(2) {
+  position: relative;
+  cursor: pointer;
+}
+
+/* Basic tooltip */
+#entityTable td:nth-child(2)::after {
+  content: attr(data-title);
+  position: absolute;
+  top: 80%;
+  left: 30px;
+  background-color: black;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+  font-size: 12px;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(5px);
+  transition: opacity 0.3s ease 0.5s, transform 0.3s ease 0.5s; /* 0.5s delay */
+  z-index: 10;
+}
+
+/* Show tooltip on hover */
+#entityTable td:nth-child(2):hover::after {
+  opacity: 1;
+  transform: translateY(0);
+}
+  </style>
+
+  
 </head>
 <body>
   <div class="container">
@@ -17,7 +50,6 @@
       <div class="center">
         <label class="custom-file-upload">
           <input type="file" id="file" name="file" accept=".pdf,.png,.jpg,.jpeg" required />
-
           📤 Upload PDF or Img 
         </label>
         <button type="submit" class="upload-btn">Extract Entities</button>
@@ -28,6 +60,8 @@
     <div class="loader hidden" id="loader"></div>
 
     <div id="result" class="hidden">
+      <button id="downloadCSV" class="download-btn hidden">📄 Download CSV</button>
+      <button id="downloadExcel" class="download-btn hidden">📊 Download Excel</button> 
       <h2>🔎 Extracted Entities</h2>
       <div class="overview">
         <p><strong>Total Entities Extracted:</strong> <span id="totalEntities">0</span></p>
@@ -51,6 +85,39 @@
     </div>
   </div>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <script src="/static/script.js"></script>
+
+  <!-- Entity tooltip handler -->
+  <script>
+    const labelDefinitions = {
+      PERSON: "Names of people",
+      ORG: "Organizations",
+      GPE: "Countries, cities, states",
+      DATE: "Specific dates or time ranges",
+      TIME: "Specific times",
+      LOC: "Non-GPE locations",
+      MONEY: "Monetary values",
+      PERCENT: "Percentage expressions",
+      CARDINAL: "Numbers not used in other types",
+      NORP: "Nationalities or religious/political groups",
+      EVENT: "Named events",
+      FAC: "Facilities (buildings, airports, etc.)",
+      PRODUCT: "Products",
+      LAW: "Named documents or laws",
+      LANGUAGE: "Languages mentioned",
+      QUANTITY: "Measurements or counts",
+      WORK_OF_ART: "Titles of books, songs, etc."
+    };
+
+    const observer = new MutationObserver(() => {
+      document.querySelectorAll('#entityTable td:nth-child(2)').forEach(td => {
+        const label = td.textContent.trim();
+        td.setAttribute('data-title', labelDefinitions[label] || 'Entity type');
+      });
+    });
+
+    observer.observe(document.querySelector('#entityTable tbody'), { childList: true });
+  </script>
 </body>
 </html>

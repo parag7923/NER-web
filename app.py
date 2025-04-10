@@ -1,5 +1,7 @@
 from flask import Flask, render_template, request, jsonify
 import spacy
+import pandas as pd
+from flask import send_file
 import pdfplumber
 import os
 import easyocr
@@ -76,6 +78,21 @@ def upload_file():
 
     entities = perform_ner(file_path)
     return jsonify(entities)
+
+@app.route('/download_excel', methods=['POST'])
+def download_excel():
+    data = request.get_json()
+    entities = data.get('entities', [])
+    
+    # Convert to DataFrame
+    df = pd.DataFrame(entities, columns=['Entity', 'Label'])
+
+    # Save to Excel
+    excel_path = 'uploads/entities.xlsx'
+    df.to_excel(excel_path, index=False)
+
+    return send_file(excel_path, as_attachment=True)
+
 
 if __name__ == '__main__':
     app.run(debug=True)

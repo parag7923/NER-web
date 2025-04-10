@@ -76,6 +76,29 @@ body {
     margin-top: 10px;
     color: #6c5ce7;
   }
+
+  .download-buttons {
+    margin-top: 20px;
+    text-align: center;
+  }
+  
+  .download-btn {
+    padding: 12px 24px;
+    margin: 10px;
+    background-color: #e5ff1f;
+    color: rgb(0, 0, 0);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+  }
+  
+  .download-btn:hover {
+    background-color: #a29bfe;
+  }
+  
+  
   
   /* Loader Animation */
   .loader {
