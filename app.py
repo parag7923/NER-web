@@ -51,8 +51,13 @@ def perform_ner(file_path):
         return {"error": "No text extracted. Please upload a valid file."}
 
     doc = nlp(text)
-    entities = [(ent.text, ent.label_) for ent in doc.ents]
-    return entities
+    
+    # Use a set to store unique (entity text, label) pairs
+    unique_entities = list(set((ent.text.strip(), ent.label_) for ent in doc.ents if ent.text.strip()))
+    
+    return unique_entities
+
+
 
 @app.route('/')
 def index():
