@@ -1,5 +1,7 @@
 from flask import Flask, render_template, request, jsonify
 import spacy
+import pandas as pd
+from flask import send_file
 import pdfplumber
 import os
 import easyocr
@@ -51,8 +53,13 @@ def perform_ner(file_path):
         return {"error": "No text extracted. Please upload a valid file."}
 
     doc = nlp(text)
-    entities = [(ent.text, ent.label_) for ent in doc.ents]
-    return entities
+    
+    # Use a set to store unique (entity text, label) pairs
+    unique_entities = list(set((ent.text.strip(), ent.label_) for ent in doc.ents if ent.text.strip()))
+    
+    return unique_entities
+
+
 
 @app.route('/')
 def index():
@@ -71,6 +78,21 @@ def upload_file():
 
     entities = perform_ner(file_path)
     return jsonify(entities)
+
+@app.route('/download_excel', methods=['POST'])
+def download_excel():
+    data = request.get_json()
+    entities = data.get('entities', [])
+    
+    # Convert to DataFrame
+    df = pd.DataFrame(entities, columns=['Entity', 'Label'])
+
+    # Save to Excel
+    excel_path = 'uploads/entities.xlsx'
+    df.to_excel(excel_path, index=False)
+
+    return send_file(excel_path, as_attachment=True)
+
 
 if __name__ == '__main__':
     app.run(debug=True)
